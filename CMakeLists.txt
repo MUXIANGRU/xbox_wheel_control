@@ -147,6 +147,7 @@ include_directories(
  add_executable(joy_to_twist_node src/joy_to_twist.cpp)
  add_executable(quadruped_teleop_node src/quadruped_teleop.cpp)
  add_executable(quadruped_joy_control_node src/quadruped_joy_control.cpp)
+ add_executable(joy_wheel_control_node src/joy_wheel_control.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -162,6 +163,11 @@ include_directories(
  target_link_libraries(joy_to_twist_node
    ${catkin_LIBRARIES}
  )
+
+target_link_libraries(joy_wheel_control_node
+  ${catkin_LIBRARIES}
+)
+
 
 target_link_libraries(quadruped_teleop_node
   ${catkin_LIBRARIES}
