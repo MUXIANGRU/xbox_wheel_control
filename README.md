@@ -1,8 +1,10 @@
 # xbox360_controller_interface
 
 ## Usage
-  Control our quadruped robot
- `roslaunch xbox360_controller_interface joy_control.launch`
+  Control our quadruped_wheel robot
+ `cd your_catkin_ws`
+ `source ./devel/setup.bash`
+ `rosrun xbox360_controller_interface joy_wheel_control_node`
   **Hint:** source file is 'quadruped_joy_control.cpp'
 
 ### 1
