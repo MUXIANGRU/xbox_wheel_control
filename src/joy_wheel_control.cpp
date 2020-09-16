@@ -24,7 +24,7 @@ private:
 QuadrupedTeleOp::QuadrupedTeleOp(ros::NodeHandle& nodehandle):
     nh_(nodehandle)
 {
-    vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+    vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 1);
     joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("/joy", 10, &QuadrupedTeleOp::joyCallback, this);
     commandUpdateThread_ = boost::thread(boost::bind(&QuadrupedTeleOp::commandUpdate, this));
 
@@ -34,7 +34,7 @@ void QuadrupedTeleOp::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
     ROS_INFO_STREAM("in the joy callback");
     leftStickLR = joy->axes[0];//contiunus 1~-1
-    leftStickUD = joy->axes[1];//contiunus 1~-1
+    leftStickUD = joy->axes[1];//contiunus -1~1
     ROS_INFO_STREAM("value of leftstickud is" << leftStickUD);
     LT = joy->axes[2];//contiunus 0~2
     rightStickLR = joy->axes[3];//contiunus 1~-1
@@ -57,11 +57,15 @@ void QuadrupedTeleOp::commandUpdate()
     ros::Rate rate(30);
     while (ros::ok()) {
         geometry_msgs::Twist wheel_velocity;
-        wheel_velocity.linear.x = leftStickUD;
+        wheel_velocity.linear.x = leftStickUD+0.1217;
         wheel_velocity.linear.y = 0;
         wheel_velocity.linear.z = 0;
+        wheel_velocity.angular.x = 0;
+        wheel_velocity.angular.y = 0;
+        wheel_velocity.angular.z = leftStickLR-0.0953;
         vel_pub_.publish(wheel_velocity);
         ROS_INFO_STREAM("send the velocity " << wheel_velocity.linear.x );
+        ROS_INFO_STREAM("send the angularity " << wheel_velocity.angular.z );
         rate.sleep();
     }
 }

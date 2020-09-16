@@ -346,10 +346,10 @@ void QuadrupedTeleOp::commandUpdate()
         if(trotFlag_)
         {
             geometry_msgs::Twist base_vel;
-            base_vel.linear.x = leftStickUD;
-            base_vel.linear.y = leftStickLR;
-            base_vel.linear.z = rightStickUD;// react to value near the limits to avoiding unexpected trigger
-            base_vel.angular.z = rightStickLR;
+            base_vel.linear.x = 0.2*leftStickUD;
+            base_vel.linear.y = 0.2*leftStickLR;
+            base_vel.linear.z = 0.2*rightStickUD;// react to value near the limits to avoiding unexpected trigger
+            base_vel.angular.z = 0.2*rightStickLR;
             vel_pub_.publish(base_vel);
             ROS_INFO("set Trot Velocity : vx = %f, vy = %f, vz = %f, wz = %f", base_vel.linear.x,
                      base_vel.linear.y, base_vel.linear.z, base_vel.angular.z);
