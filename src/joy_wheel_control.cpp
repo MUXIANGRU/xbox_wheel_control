@@ -15,6 +15,8 @@ private:
     ros::NodeHandle nh_;
     float leftStickLR ,leftStickUD,LT,rightStickLR ,rightStickUD, RT, crossKeyLR, crossKeyUD;//1/-1
     int keyA, keyB, keyX, keyY, LB, RB, keyBack, keyStart, keyPower;//0/1
+    int countkey1=1;
+    int countkey2=1;
     ros::Publisher vel_pub_;
     ros::Subscriber joy_sub_;
     boost::thread commandUpdateThread_;
@@ -51,21 +53,60 @@ void QuadrupedTeleOp::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     keyBack = joy->buttons[6];//0/1
     keyStart = joy->buttons[7];//0/1
     keyPower = joy->buttons[8];//0/1
+    leftStickUD= leftStickUD+0.1217;
+    leftStickLR= leftStickLR-0.0953;
 }
 void QuadrupedTeleOp::commandUpdate()
 {
     ros::Rate rate(30);
     while (ros::ok()) {
         geometry_msgs::Twist wheel_velocity;
-        wheel_velocity.linear.x = leftStickUD+0.1217;
+        if(keyA ==1){
+            countkey1++;
+            if(countkey1++){
+                ROS_INFO_STREAM("The linear velocity is increased by 1% ");
+            }
+
+        };
+        if(keyB ==1){
+            countkey2++;
+            if(countkey2++){
+                ROS_INFO_STREAM("The angular velocity is increased by 1% ");
+            }
+        };
+        if(keyX ==1){
+            countkey1--;
+            if(countkey1--){
+                ROS_INFO_STREAM("The linear velocity is decreased by 1% ");
+            }
+
+        };
+        if(keyY ==1){
+            countkey2--;
+            if(countkey2--){
+                ROS_INFO_STREAM("The angular velocity is decreased by 1% ");
+            }
+        };
+        wheel_velocity.linear.x = leftStickUD*pow(1.01,countkey1);
         wheel_velocity.linear.y = 0;
         wheel_velocity.linear.z = 0;
         wheel_velocity.angular.x = 0;
         wheel_velocity.angular.y = 0;
-        wheel_velocity.angular.z = leftStickLR-0.0953;
-        vel_pub_.publish(wheel_velocity);
-        ROS_INFO_STREAM("send the velocity " << wheel_velocity.linear.x );
-        ROS_INFO_STREAM("send the angularity " << wheel_velocity.angular.z );
+        wheel_velocity.angular.z = leftStickLR*pow(1.01,countkey2);
+
+        if(LB==1){
+            vel_pub_.publish(wheel_velocity);
+            ROS_INFO_STREAM("send the velocity " << wheel_velocity.linear.x );
+            ROS_INFO_STREAM("send the angularity " << wheel_velocity.angular.z );
+        };
+        if(RB==1){
+            wheel_velocity.linear.x =0;
+            wheel_velocity.angular.z =0;
+            vel_pub_.publish(wheel_velocity);
+            ROS_WARN("STOPED!!!!!!!!!!!!!!!!!!!!!!!");
+
+        }
+
         rate.sleep();
     }
 }
